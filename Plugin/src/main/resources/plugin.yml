@@ -1,0 +1,6 @@
+name: Mazebound
+version: 1.0
+main: net.mazebound.Mazebound
+api-version: '1.21'
+author: Silva44444
+description: The Mazebound exploration server plugin
