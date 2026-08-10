@@ -9,6 +9,7 @@ import net.mazebound.data.PlayerDataManager;
 import net.mazebound.exploration.ExplorationListener;
 import net.mazebound.exploration.ExplorationManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import net.mazebound.commands.SpawnMazeCommand;
 
 public class Mazebound extends JavaPlugin {
 
@@ -30,6 +31,10 @@ public class Mazebound extends JavaPlugin {
         getCommand("profile").setExecutor(
                 new ProfileCommand(this)
         );
+
+        getCommand("spawnmaze").setExecutor(
+        new SpawnMazeCommand()
+);
 
         getCommand("discover").setExecutor(
                 new DiscoverCommand(this)

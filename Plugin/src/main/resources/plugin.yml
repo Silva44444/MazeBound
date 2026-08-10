@@ -25,3 +25,7 @@ commands:
   buildcell:
     description: Builds a test maze cell
     usage: /buildcell [x] [z]
+
+  spawnmaze:
+    description: Spawns a 5x5 test maze
+    usage: /spawnmaze [seed]

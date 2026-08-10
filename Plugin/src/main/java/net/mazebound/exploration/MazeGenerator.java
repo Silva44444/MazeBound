@@ -1,7 +1,6 @@
 package net.mazebound.exploration;
 
 import net.mazebound.world.WorldPlanner;
-import net.mazebound.exploration.RegionType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Random;
+import java.util.Set;
 
 public class MazeGenerator {
 
@@ -35,7 +34,7 @@ public class MazeGenerator {
                 Cell cell = new Cell(x, z);
 
                 if (worldPlanner.getRegionType(cell)
-        == RegionType.HUB) {
+                        == RegionType.HUB) {
                     continue;
                 }
 
@@ -63,6 +62,7 @@ public class MazeGenerator {
         }
 
         addSpawnEntrances(cells);
+        addLargeRoomOpenings(cells);
 
         return cells;
     }
@@ -127,23 +127,87 @@ public class MazeGenerator {
             Map<String, Cell> cells
     ) {
         Cell north = cells.get("0,-5");
+
         if (north != null) {
             north.addOpening(CellDirection.SOUTH);
         }
 
         Cell east = cells.get("5,0");
+
         if (east != null) {
             east.addOpening(CellDirection.WEST);
         }
 
         Cell south = cells.get("0,5");
+
         if (south != null) {
             south.addOpening(CellDirection.NORTH);
         }
 
         Cell west = cells.get("-5,0");
+
         if (west != null) {
             west.addOpening(CellDirection.EAST);
         }
     }
+
+   private void addLargeRoomOpenings(
+        Map<String, Cell> cells
+) {
+    final double MAZE_CHANCE = 0.50;
+
+    // Most mazes stay completely normal.
+    if (random.nextDouble() >= MAZE_CHANCE) {
+        return;
+    }
+
+    // This maze gets a large-room section.
+    int openingsToCreate =
+            2 + random.nextInt(3); // 2-4
+
+    List<Cell> candidates =
+            new ArrayList<>(cells.values());
+
+    Collections.shuffle(candidates, random);
+
+    int created = 0;
+
+    for (Cell cell : candidates) {
+
+        // Try EAST.
+        Cell east = cells.get(
+                (cell.x() + 1) + "," + cell.z()
+        );
+
+        if (east != null
+                && random.nextBoolean()) {
+
+            cell.addOpening(CellDirection.EAST);
+            east.addOpening(CellDirection.WEST);
+
+            created++;
+
+            if (created >= openingsToCreate) {
+                break;
+            }
+        }
+
+        // Try SOUTH.
+        Cell south = cells.get(
+                cell.x() + "," + (cell.z() + 1)
+        );
+
+        if (south != null) {
+
+            cell.addOpening(CellDirection.SOUTH);
+            south.addOpening(CellDirection.NORTH);
+
+            created++;
+
+            if (created >= openingsToCreate) {
+                break;
+            }
+        }
+    }
+}
 }
