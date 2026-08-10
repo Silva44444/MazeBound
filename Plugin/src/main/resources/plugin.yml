@@ -4,3 +4,24 @@ main: net.mazebound.Mazebound
 api-version: '1.21'
 author: Silva44444
 description: The Mazebound exploration server plugin
+
+commands:
+  profile:
+    description: View your Mazebound profile
+    usage: /profile
+
+  discover:
+    description: Test cell discovery
+    usage: /discover
+
+  mazetest:
+    description: Tests the maze generator
+    usage: /mazetest [seed]
+
+  worldplantest:
+    description: Tests the world planner
+    usage: /worldplantest [seed]
+
+  buildcell:
+    description: Builds a test maze cell
+    usage: /buildcell [x] [z]
