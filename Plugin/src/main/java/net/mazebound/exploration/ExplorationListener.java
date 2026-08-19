@@ -24,13 +24,16 @@ public class ExplorationListener implements Listener {
 
         Player player = event.getPlayer();
 
-        Cell cell = plugin.getExplorationManager()
-                .getCellFromLocation(event.getTo());
-
-        String cellId = cell.getId();
-
         boolean discovered = plugin.getExplorationManager()
-                .discoverCell(player.getUniqueId(), cellId);
+        .discoverCell(
+                player.getUniqueId(),
+                event.getTo()
+        );
+
+Cell cell = plugin.getExplorationManager()
+        .getCellFromLocation(event.getTo());
+
+String cellId = cell.getId();
 
         if (discovered) {
             player.sendMessage(

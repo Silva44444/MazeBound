@@ -1,6 +1,7 @@
 package net.mazebound.exploration;
 
 import net.mazebound.data.PlayerDataManager;
+import net.mazebound.data.PlayerData;
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -17,12 +18,29 @@ public class ExplorationManager {
         this.regionManager = new RegionManager();
     }
 
-    public boolean discoverCell(UUID playerId, String cellId) {
+   public boolean discoverCell(UUID playerId, Location location) {
 
-        return playerDataManager
-                .getPlayerData(playerId)
-                .discoverCell(cellId);
+    if (!isMazeLocation(location)) {
+        return false;
     }
+
+    Cell cell = getCellFromLocation(location);
+    String cellId = cell.getId();
+
+    PlayerData data =
+            playerDataManager.getPlayerData(playerId);
+
+    boolean discovered =
+            data.discoverCell(cellId);
+
+    if (!discovered) {
+        return false;
+    }
+
+    data.addXp(10);
+
+    return true;
+}
 
     public Cell getCellFromLocation(Location location) {
 
