@@ -24,7 +24,7 @@ public class Mazebound extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        playerDataManager = new PlayerDataManager();
+        playerDataManager = new PlayerDataManager(this);
         explorationManager =
                 new ExplorationManager(playerDataManager);
 
@@ -69,7 +69,10 @@ public class Mazebound extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
-        getLogger().info("Mazebound has stopped!");
-    }
+public void onDisable() {
+    playerDataManager.saveAll();
+
+    getLogger().info("Mazebound has stopped!");
+}
+    
 }
