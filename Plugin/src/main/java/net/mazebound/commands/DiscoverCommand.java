@@ -31,10 +31,10 @@ public class DiscoverCommand implements CommandExecutor {
                 .getCellFromLocation(player.getLocation());
 
         boolean discovered = plugin.getExplorationManager()
-                .discoverCell(
-                        player.getUniqueId(),
-                        cell.getId()
-                );
+        .discoverCell(
+                player.getUniqueId(),
+                player.getLocation()
+        );
 
         if (discovered) {
             player.sendMessage(
