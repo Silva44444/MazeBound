@@ -94,9 +94,9 @@ public class PlayerDataManager {
         );
 
         config.set(
-                "discovered-cells",
-                data.getDiscoveredCells()
-        );
+        "discovered-cells",
+        new java.util.ArrayList<>(data.getDiscoveredCells())
+);
 
         try {
             config.save(file);
