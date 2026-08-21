@@ -8,7 +8,12 @@ public class PlayerData {
 
     private final UUID uuid;
     private int xp;
-    private final Set<String> discoveredCells = new HashSet<>();
+
+    private final Set<String> discoveredCells =
+            new HashSet<>();
+
+    private final Set<Integer> unlockedMilestones =
+            new HashSet<>();
 
     public PlayerData(UUID uuid) {
         this.uuid = uuid;
@@ -41,5 +46,17 @@ public class PlayerData {
 
     public int getCellsDiscovered() {
         return discoveredCells.size();
+    }
+
+    public Set<Integer> getUnlockedMilestones() {
+        return unlockedMilestones;
+    }
+
+    public boolean unlockMilestone(int milestone) {
+        return unlockedMilestones.add(milestone);
+    }
+
+    public boolean hasMilestone(int milestone) {
+        return unlockedMilestones.contains(milestone);
     }
 }

@@ -68,10 +68,16 @@ public class PlayerDataManager {
         data.setXp(config.getInt("xp", 0));
 
         for (String cellId :
-                config.getStringList("discovered-cells")) {
+        config.getStringList("discovered-cells")) {
 
-            data.discoverCell(cellId);
-        }
+    data.discoverCell(cellId);
+}
+
+for (Integer milestone :
+        config.getIntegerList("unlocked-milestones")) {
+
+    data.unlockMilestone(milestone);
+}
 
         return data;
     }
@@ -96,6 +102,11 @@ public class PlayerDataManager {
         config.set(
         "discovered-cells",
         new java.util.ArrayList<>(data.getDiscoveredCells())
+);
+
+config.set(
+        "unlocked-milestones",
+        new java.util.ArrayList<>(data.getUnlockedMilestones())
 );
 
         try {

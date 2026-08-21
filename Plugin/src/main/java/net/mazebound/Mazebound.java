@@ -6,6 +6,7 @@ import net.mazebound.commands.MazeTestCommand;
 import net.mazebound.commands.ProfileCommand;
 import net.mazebound.commands.WorldPlanTestCommand;
 import net.mazebound.data.PlayerDataManager;
+import net.mazebound.data.MilestoneManager;
 import net.mazebound.exploration.ExplorationListener;
 import net.mazebound.exploration.ExplorationManager;
 import org.bukkit.plugin.java.JavaPlugin;
