@@ -59,4 +59,18 @@ public class PlayerData {
     public boolean hasMilestone(int milestone) {
         return unlockedMilestones.contains(milestone);
     }
+    public MazeboundRank getRank() {
+
+    MazeboundRank currentRank =
+            MazeboundRank.WANDERER;
+
+    for (MazeboundRank rank : MazeboundRank.values()) {
+
+        if (getCellsDiscovered() >= rank.getRequiredCells()) {
+            currentRank = rank;
+        }
+    }
+
+    return currentRank;
+}
 }

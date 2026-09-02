@@ -36,9 +36,13 @@ Cell cell = plugin.getExplorationManager()
 String cellId = cell.getId();
 
         if (discovered) {
-            player.sendMessage(
-                    "§aDiscovered cell §f" + cellId + "§a!"
-            );
-        }
+
+    player.sendMessage(
+            "§aDiscovered cell §f" + cellId + "§a!"
+    );
+
+    plugin.getLuckPermsManager()
+            .updateRank(player);
+}
     }
 }
