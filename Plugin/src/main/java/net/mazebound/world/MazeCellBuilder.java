@@ -9,6 +9,7 @@ public class MazeCellBuilder {
 
     public static final int MAZE_FLOOR_Y = 50;
     public static final int WALL_HEIGHT = 6;
+    private static final int CELL_SIZE = 55;
 
     private final World world;
 
@@ -18,8 +19,8 @@ public class MazeCellBuilder {
 
     public void build(Cell cell) {
 
-        int baseX = cell.x() * 55;
-        int baseZ = cell.z() * 55;
+        int baseX = cell.x() * CELL_SIZE;
+        int baseZ = cell.z() * CELL_SIZE;
 
         buildFloor(baseX, baseZ);
 
@@ -31,8 +32,8 @@ public class MazeCellBuilder {
 
     private void buildFloor(int baseX, int baseZ) {
 
-        for (int x = 0; x < 55; x++) {
-            for (int z = 0; z < 55; z++) {
+        for (int x = 0; x < CELL_SIZE; x++) {
+            for (int z = 0; z < CELL_SIZE; z++) {
 
                 world.getBlockAt(
                         baseX + x,
@@ -43,73 +44,96 @@ public class MazeCellBuilder {
         }
     }
 
-    private void buildNorthWall(Cell cell, int baseX, int baseZ) {
+    private void buildNorthWall(
+            Cell cell,
+            int baseX,
+            int baseZ
+    ) {
+
+        if (cell.hasLargeRoomConnection(CellDirection.NORTH)) {
+            return;
+        }
 
         boolean hasOpening =
                 cell.hasOpening(CellDirection.NORTH);
 
-        for (int i = 0; i < 55; i++) {
+        for (int i = 0; i < CELL_SIZE; i++) {
 
             if (hasOpening && isOpeningPosition(i)) {
                 continue;
             }
 
-            buildWall(
-                    baseX + i,
-                    baseZ
-            );
+            buildWall(baseX + i, baseZ);
         }
     }
 
-    private void buildSouthWall(Cell cell, int baseX, int baseZ) {
+    private void buildSouthWall(
+            Cell cell,
+            int baseX,
+            int baseZ
+    ) {
+
+        if (cell.hasLargeRoomConnection(CellDirection.SOUTH)) {
+            return;
+        }
 
         boolean hasOpening =
                 cell.hasOpening(CellDirection.SOUTH);
 
-        for (int i = 0; i < 55; i++) {
+        for (int i = 0; i < CELL_SIZE; i++) {
 
             if (hasOpening && isOpeningPosition(i)) {
                 continue;
             }
 
-            buildWall(
-                    baseX + i,
-                    baseZ + 54
-            );
+            buildWall(baseX + i, baseZ + CELL_SIZE - 1);
         }
     }
 
-    private void buildWestWall(Cell cell, int baseX, int baseZ) {
+    private void buildWestWall(
+            Cell cell,
+            int baseX,
+            int baseZ
+    ) {
+
+        if (cell.hasLargeRoomConnection(CellDirection.WEST)) {
+            return;
+        }
 
         boolean hasOpening =
                 cell.hasOpening(CellDirection.WEST);
 
-        for (int i = 0; i < 55; i++) {
+        for (int i = 0; i < CELL_SIZE; i++) {
 
             if (hasOpening && isOpeningPosition(i)) {
                 continue;
             }
 
-            buildWall(
-                    baseX,
-                    baseZ + i
-            );
+            buildWall(baseX, baseZ + i);
         }
     }
 
-    private void buildEastWall(Cell cell, int baseX, int baseZ) {
+    private void buildEastWall(
+            Cell cell,
+            int baseX,
+            int baseZ
+    ) {
+
+        if (cell.hasLargeRoomConnection(CellDirection.EAST)) {
+            return;
+        }
 
         boolean hasOpening =
                 cell.hasOpening(CellDirection.EAST);
 
-        for (int i = 0; i < 55; i++) {
+        for (int i = 0; i < CELL_SIZE; i++) {
 
             if (hasOpening && isOpeningPosition(i)) {
                 continue;
             }
 
             buildWall(
-                    baseX + 54,
+                    baseX + CELL_SIZE - 1,
                     baseZ + i
             );
         }

@@ -1,5 +1,6 @@
 package net.mazebound.exploration;
 
+import net.mazebound.data.PlayerData;
 import net.mazebound.data.PlayerDataManager;
 import org.bukkit.Location;
 
@@ -19,10 +20,18 @@ public class ExplorationManager {
 
     public boolean discoverCell(UUID playerId, String cellId) {
 
-        return playerDataManager
-                .getPlayerData(playerId)
-                .discoverCell(cellId);
+    PlayerData data =
+            playerDataManager.getPlayerData(playerId);
+
+    boolean newlyDiscovered =
+            data.discoverCell(cellId);
+
+    if (newlyDiscovered) {
+        data.addXp(10);
     }
+
+    return newlyDiscovered;
+}
 
     public Cell getCellFromLocation(Location location) {
 

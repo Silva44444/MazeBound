@@ -12,6 +12,9 @@ public class Cell {
     private final Set<CellDirection> openings =
             EnumSet.noneOf(CellDirection.class);
 
+            private final Set<CellDirection> largeRoomConnections =
+        EnumSet.noneOf(CellDirection.class);
+
     public Cell(int x, int z) {
         this.x = x;
         this.z = z;
@@ -32,6 +35,15 @@ public class Cell {
     public void addOpening(CellDirection direction) {
         openings.add(direction);
     }
+
+    public void addLargeRoomConnection(CellDirection direction) {
+    largeRoomConnections.add(direction);
+}
+
+public boolean hasLargeRoomConnection(CellDirection direction) {
+    return largeRoomConnections.contains(direction);
+}
+    
 
     public boolean hasOpening(CellDirection direction) {
         return openings.contains(direction);

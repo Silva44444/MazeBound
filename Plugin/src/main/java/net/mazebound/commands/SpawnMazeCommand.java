@@ -2,6 +2,7 @@ package net.mazebound.commands;
 
 import net.mazebound.exploration.Cell;
 import net.mazebound.world.MazeCellBuilder;
+import net.mazebound.exploration.CellDirection;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -64,9 +65,11 @@ public class SpawnMazeCommand implements CommandExecutor {
 
         // Generate a connected maze through the 5x5 cells.
         generateMaze(cells, originX, originX + SIZE - 1,
-                originZ, originZ + SIZE - 1, seed);
+        originZ, originZ + SIZE - 1, seed);
 
-        MazeCellBuilder builder =
+addLargeRoomConnections(cells, seed);
+
+MazeCellBuilder builder =
                 new MazeCellBuilder(player.getWorld());
 
         for (Cell cell : cells.values()) {
@@ -172,4 +175,65 @@ public class SpawnMazeCommand implements CommandExecutor {
             );
         }
     }
+    private void addLargeRoomConnections(
+        Map<String, Cell> cells,
+        long seed
+) {
+    java.util.Random random =
+            new java.util.Random(seed + 12345);
+
+    // 8% chance for large rooms.
+    if (random.nextDouble() >= 0.10) {
+        return;
+    }
+
+    int connections =
+            2 + random.nextInt(3); // 2-4 full connections
+
+    java.util.List<Cell> candidates =
+            new java.util.ArrayList<>(cells.values());
+
+    java.util.Collections.shuffle(candidates, random);
+
+    int created = 0;
+
+    for (Cell cell : candidates) {
+
+        // Connect to the cell EAST.
+        Cell east = cells.get(
+                (cell.x() + 1) + "," + cell.z()
+        );
+
+        if (east != null
+                && !cell.hasLargeRoomConnection(CellDirection.EAST)) {
+
+            cell.addLargeRoomConnection(CellDirection.EAST);
+            east.addLargeRoomConnection(CellDirection.WEST);
+
+            created++;
+
+            if (created >= connections) {
+                return;
+            }
+        }
+
+        // Connect to the cell SOUTH.
+        Cell south = cells.get(
+                cell.x() + "," + (cell.z() + 1)
+        );
+
+        if (south != null
+                && !cell.hasLargeRoomConnection(CellDirection.SOUTH)) {
+
+            cell.addLargeRoomConnection(CellDirection.SOUTH);
+            south.addLargeRoomConnection(CellDirection.NORTH);
+
+            created++;
+
+            if (created >= connections) {
+                return;
+            }
+        }
+    }
+}
 }

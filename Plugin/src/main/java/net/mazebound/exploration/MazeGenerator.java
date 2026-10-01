@@ -151,60 +151,58 @@ public class MazeGenerator {
         }
     }
 
-   private void addLargeRoomOpenings(
+  private void addLargeRoomOpenings(
         Map<String, Cell> cells
 ) {
     final double MAZE_CHANCE = 0.50;
 
-    // Most mazes stay completely normal.
+    // Only 8% of mazes get the large-room effect.
     if (random.nextDouble() >= MAZE_CHANCE) {
         return;
     }
-
-    // This maze gets a large-room section.
-    int openingsToCreate =
-            2 + random.nextInt(3); // 2-4
 
     List<Cell> candidates =
             new ArrayList<>(cells.values());
 
     Collections.shuffle(candidates, random);
 
-    int created = 0;
+    int openingsCreated = 0;
+    int targetOpenings = 2 + random.nextInt(3); // 2-4
 
     for (Cell cell : candidates) {
 
-        // Try EAST.
+        // EAST
         Cell east = cells.get(
                 (cell.x() + 1) + "," + cell.z()
         );
 
         if (east != null
-                && random.nextBoolean()) {
+                && !cell.hasOpening(CellDirection.EAST)) {
 
             cell.addOpening(CellDirection.EAST);
             east.addOpening(CellDirection.WEST);
 
-            created++;
+            openingsCreated++;
 
-            if (created >= openingsToCreate) {
+            if (openingsCreated >= targetOpenings) {
                 break;
             }
         }
 
-        // Try SOUTH.
+        // SOUTH
         Cell south = cells.get(
                 cell.x() + "," + (cell.z() + 1)
         );
 
-        if (south != null) {
+        if (south != null
+                && !cell.hasOpening(CellDirection.SOUTH)) {
 
             cell.addOpening(CellDirection.SOUTH);
             south.addOpening(CellDirection.NORTH);
 
-            created++;
+            openingsCreated++;
 
-            if (created >= openingsToCreate) {
+            if (openingsCreated >= targetOpenings) {
                 break;
             }
         }
