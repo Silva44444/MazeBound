@@ -70,8 +70,15 @@ public class PlayerDataManager {
         for (String cellId :
                 config.getStringList("discovered-cells")) {
 
-            data.discoverCell(cellId);
+
+           data.discoverCell(cellId);
         }
+
+for (Integer milestone :
+        config.getIntegerList("unlocked-milestones")) {
+
+    data.unlockMilestone(milestone);
+}
 
         return data;
     }
@@ -85,10 +92,16 @@ public class PlayerDataManager {
 
         config.set("uuid", data.getUuid().toString());
         config.set("xp", data.getXp());
+
         config.set(
                 "discovered-cells",
                 data.getDiscoveredCells()
         );
+
+config.set(
+        "unlocked-milestones",
+        new java.util.ArrayList<>(data.getUnlockedMilestones())
+);
 
         try {
             config.save(file);

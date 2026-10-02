@@ -6,6 +6,9 @@ import net.mazebound.commands.MazeTestCommand;
 import net.mazebound.commands.ProfileCommand;
 import net.mazebound.commands.WorldPlanTestCommand;
 import net.mazebound.data.PlayerDataManager;
+import net.mazebound.data.MilestoneManager;
+import net.mazebound.data.LuckPermsManager;
+import net.mazebound.data.PlayerRankListener;
 import net.mazebound.exploration.ExplorationListener;
 import net.mazebound.exploration.ExplorationManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,11 +23,17 @@ public class Mazebound extends JavaPlugin {
 
     private PlayerDataManager playerDataManager;
     private ExplorationManager explorationManager;
+    private LuckPermsManager luckPermsManager;
 
     @Override
     public void onEnable() {
 
-       playerDataManager = new PlayerDataManager(this);
+
+        playerDataManager = new PlayerDataManager(this);
+
+        luckPermsManager =
+                new LuckPermsManager(playerDataManager);
+
         explorationManager =
                 new ExplorationManager(playerDataManager);
 
@@ -57,6 +66,11 @@ public class Mazebound extends JavaPlugin {
                 this
         );
 
+        getServer().getPluginManager().registerEvents(
+        new PlayerRankListener(this),
+        this
+        );
+
         getLogger().info("Mazebound v1.0 enabled!");
     }
 
@@ -64,16 +78,20 @@ public class Mazebound extends JavaPlugin {
         return playerDataManager;
     }
 
+    public LuckPermsManager getLuckPermsManager() {
+    return luckPermsManager;
+}
+
     public ExplorationManager getExplorationManager() {
         return explorationManager;
     }
 
-   @Override
+    @Override
 public void onDisable() {
-
-    if (playerDataManager != null) {
-        playerDataManager.saveAll();
-    }
+  
+ if (playerDataManager != null){
+ playerDataManager.saveAll();
+}
 
     getLogger().info("Mazebound has stopped!");
 }
