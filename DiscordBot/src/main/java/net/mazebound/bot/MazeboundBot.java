@@ -21,8 +21,11 @@ import java.util.concurrent.CompletableFuture;
 
 public final class MazeboundBot extends ListenerAdapter {
 
-    private final ApplicationTickets applicationTickets =
-    new ApplicationTickets();
+    final TicketLifecycleManager ticketLifecycleManager =
+    new TicketLifecycleManager();
+
+final ApplicationTickets applicationTickets =
+    new ApplicationTickets(ticketLifecycleManager);
 
    
 public static void main(String[] args) {
@@ -38,14 +41,14 @@ public static void main(String[] args) {
 
     MazeboundBot bot = new MazeboundBot();
 
-JDABuilder.createDefault(token)
+        JDABuilder.createDefault(token)
     .addEventListeners(
         bot,
-        bot.applicationTickets
+        bot.applicationTickets,
+        bot.ticketLifecycleManager
     )
     .build();
-}
-
+    }
   
 @Override
 public void onReady(ReadyEvent event) {
@@ -114,34 +117,35 @@ public void onReady(ReadyEvent event) {
     public void onSlashCommandInteraction(
         SlashCommandInteractionEvent event
     ) {
+        
         switch (event.getName()) {
-            
-case "help" -> event.reply(
-    "**Mazebound Bot Commands**\n"
-    + "`/help` — Show available commands\n"
-    + "`/server` — Check Minecraft server status\n"
-    + "`/rules` — View the Mazebound rules in #rules"
-).setEphemeral(true).queue();
+            case "help" -> event.reply(
+                "**Mazebound Bot Commands**\n"
+                + "`/help` — Show available commands\n"
+                + "`/server` — Check Minecraft server status\n"
+                + "`/rules` — View the Mazebound rules in #rules"
+            ).setEphemeral(true).queue();
 
             case "server" -> checkServer(event);
 
             case "rules" -> event.reply(
-    "📜 **Mazebound Rules**\n"
-    + "View our rules in <#1539371067523600494>!"
-).setEphemeral(true).queue();
+                "📜 **Mazebound Rules**\n"
+                + "View our rules in <#1539371067523600494>!"
+            ).setEphemeral(true).queue();
 
-case "postrules" -> postRules(event);
+            case "postrules" -> postRules(event);
+
+            case "postapplications" ->
+                applicationTickets.postPanel(event);
+
+            case "forceclose" ->
+                applicationTickets.forceClose(event);
+
+            case "reopenticket" ->
+                applicationTickets.reopenTicket(event);
 
             default -> event.reply("Unknown command.")
                 .setEphemeral(true).queue();
-
-case "postapplications" ->
-    applicationTickets.postPanel(event);
-case "forceclose" ->
-    applicationTickets.forceClose(event);
-case "reopenticket" ->
-    applicationTickets.reopenTicket(event);
-
         }
     }
 

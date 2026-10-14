@@ -29,3 +29,7 @@ commands:
   spawnmaze:
     description: Spawns a 5x5 test maze
     usage: /spawnmaze [seed]
+
+  herbgarden:
+    description: Manage Healing Herb garden plants
+    usage: /herbgarden add|remove|list

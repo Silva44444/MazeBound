@@ -4,6 +4,7 @@ import net.mazebound.commands.BuildCellCommand;
 import net.mazebound.commands.DiscoverCommand;
 import net.mazebound.commands.MazeTestCommand;
 import net.mazebound.commands.ProfileCommand;
+import net.mazebound.commands.SpawnMazeCommand;
 import net.mazebound.commands.WorldPlanTestCommand;
 import net.mazebound.data.PlayerDataManager;
 import net.mazebound.data.MilestoneManager;
@@ -11,8 +12,11 @@ import net.mazebound.data.LuckPermsManager;
 import net.mazebound.data.PlayerRankListener;
 import net.mazebound.exploration.ExplorationListener;
 import net.mazebound.exploration.ExplorationManager;
+import net.mazebound.items.CustomItemManager;
+import net.mazebound.items.CustomItemListener;
+import net.mazebound.items.HerbGardenManager;
+import net.mazebound.items.HerbGardenCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import net.mazebound.commands.SpawnMazeCommand;
 
 public class Mazebound extends JavaPlugin {
 
@@ -24,6 +28,8 @@ public class Mazebound extends JavaPlugin {
     private PlayerDataManager playerDataManager;
     private ExplorationManager explorationManager;
     private LuckPermsManager luckPermsManager;
+    private CustomItemManager customItemManager;
+    private HerbGardenManager herbGardenManager;
 
     @Override
     public void onEnable() {
@@ -36,6 +42,25 @@ public class Mazebound extends JavaPlugin {
 
         explorationManager =
                 new ExplorationManager(playerDataManager);
+
+                customItemManager = new CustomItemManager(this);
+customItemManager.registerRecipes();
+
+getServer().getPluginManager().registerEvents(
+        new CustomItemListener(this, customItemManager),
+        this
+);
+
+herbGardenManager = new HerbGardenManager(this, customItemManager);
+
+getServer().getPluginManager().registerEvents(
+        herbGardenManager,
+        this
+);
+
+getCommand("herbgarden").setExecutor(
+        new HerbGardenCommand(this, herbGardenManager)
+);
 
         getCommand("profile").setExecutor(
                 new ProfileCommand(this)
@@ -91,6 +116,10 @@ public void onDisable() {
   
  if (playerDataManager != null){
  playerDataManager.saveAll();
+}
+
+if (herbGardenManager != null) {
+    herbGardenManager.save();
 }
 
     getLogger().info("Mazebound has stopped!");
