@@ -40,7 +40,16 @@ commands:
     permission: mazebound.waystone.admin
     permission-message: "You don't have permission to manage waystones."
 
+  mazewpn:
+    description: Give Mazebound custom weapons
+    usage: /mazewpn give <player>
+    permission: mazebound.weapon.admin
+    permission-message: "You don't have permission to manage Mazebound weapons."
+
 permissions:
   mazebound.waystone.admin:
     description: Allows registering and removing waystones and giving test runes
+    default: op
+  mazebound.weapon.admin:
+    description: Allows giving Mazebound custom weapons
     default: op
