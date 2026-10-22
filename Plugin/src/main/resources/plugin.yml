@@ -33,3 +33,14 @@ commands:
   herbgarden:
     description: Manage Healing Herb garden plants
     usage: /herbgarden add|remove|list
+
+  waystone:
+    description: Manage and test Mazebound waystones
+    usage: /waystone set|remove|list|give
+    permission: mazebound.waystone.admin
+    permission-message: "You don't have permission to manage waystones."
+
+permissions:
+  mazebound.waystone.admin:
+    description: Allows registering and removing waystones and giving test runes
+    default: op
