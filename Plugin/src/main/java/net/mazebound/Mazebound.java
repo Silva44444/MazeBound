@@ -18,6 +18,8 @@ import net.mazebound.items.HerbGardenCommand;
 import net.mazebound.items.WaystoneManager;
 import net.mazebound.items.WaystoneRuneListener;
 import net.mazebound.items.WaystoneCommand;
+import net.mazebound.items.MazeStrideWeaponListener;
+import net.mazebound.items.MazeWeaponCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mazebound extends JavaPlugin {
@@ -32,7 +34,6 @@ public class Mazebound extends JavaPlugin {
     private CustomItemManager customItemManager;
     private HerbGardenManager herbGardenManager;
     private WaystoneManager waystoneManager;
-    private WaystoneRuneListener waystoneRuneListener;
 
     @Override
     public void onEnable() {
@@ -50,10 +51,14 @@ public class Mazebound extends JavaPlugin {
         getCommand("herbgarden").setExecutor(new HerbGardenCommand(this, herbGardenManager));
 
         waystoneManager = new WaystoneManager(this);
-        waystoneRuneListener = new WaystoneRuneListener(this, waystoneManager);
+        WaystoneRuneListener waystoneRuneListener = new WaystoneRuneListener(this, waystoneManager);
         getServer().getPluginManager().registerEvents(waystoneRuneListener, this);
         getCommand("waystone").setExecutor(
                 new WaystoneCommand(this, waystoneManager, waystoneRuneListener));
+
+        MazeStrideWeaponListener mazeStrideListener = new MazeStrideWeaponListener(this);
+        getServer().getPluginManager().registerEvents(mazeStrideListener, this);
+        getCommand("mazewpn").setExecutor(new MazeWeaponCommand(this, mazeStrideListener));
 
         getCommand("profile").setExecutor(new ProfileCommand(this));
         getCommand("spawnmaze").setExecutor(new SpawnMazeCommand());
