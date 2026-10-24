@@ -1,9 +1,15 @@
 package net.mazebound.world;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Biome;
+import org.bukkit.block.BlockState;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
+import org.bukkit.loot.Lootable;
+import org.bukkit.loot.LootTable;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,6 +97,48 @@ public class MazePopulator extends BlockPopulator {
         @Override
         public void setType(int x, int y, int z, Material material) {
             region.setType(x, y, z, material);
+        }
+
+        @Override
+        public String getBiomeKey(int x, int y, int z) {
+            try {
+                Biome biome = region.getBiome(x, y, z);
+                return biome == null ? "" : biome.getKey().toString();
+            } catch (Exception exception) {
+                return "";
+            }
+        }
+
+        @Override
+        public void setBrushable(
+                int x,
+                int y,
+                int z,
+                Material material,
+                String lootTable
+        ) {
+            region.setType(x, y, z, material);
+
+            // Best effort: if anything about the loot table fails, the block
+            // simply stays a plain suspicious block. It must never break
+            // chunk generation.
+            try {
+                BlockState state = region.getBlockState(x, y, z);
+
+                if (state instanceof Lootable lootable) {
+
+                    LootTable table = Bukkit.getLootTable(
+                            NamespacedKey.minecraft(lootTable)
+                    );
+
+                    if (table != null) {
+                        lootable.setLootTable(table);
+                        state.update(true, false);
+                    }
+                }
+            } catch (Exception ignored) {
+                // see comment above
+            }
         }
     }
 }

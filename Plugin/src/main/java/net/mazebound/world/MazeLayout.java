@@ -3,8 +3,6 @@ package net.mazebound.world;
 import net.mazebound.Mazebound;
 import net.mazebound.exploration.Cell;
 import net.mazebound.exploration.MazeGenerator;
-import net.mazebound.exploration.RegionManager;
-import net.mazebound.exploration.RegionType;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,59 +11,53 @@ import java.util.Map;
 /**
  * The one source of truth for "what does the maze look like".
  *
- * Generated once at startup from a saved seed, so the maze is identical
- * after every restart. Everything else (renderer, exploration, region
- * checks, boss/loot placement) asks this class instead of guessing.
+ * The maze is a square ring around the world origin: everything within
+ * innerRadiusCells of spawn stays normal terrain, and the maze fills the
+ * cells from innerRadiusCells out to outerRadiusCells (inclusive), measured
+ * as max(|cellX|, |cellZ|).
  *
- * The maze covers cells -radius..+radius on both axes, centered on the
- * world origin. The hub cells in the middle are NOT part of the layout.
+ * Generated once at startup from a saved seed, so the maze is identical
+ * after every restart. Everything else (renderer, exploration, boss/loot
+ * placement) asks this class instead of guessing.
  */
 public class MazeLayout {
 
     private static final int CELL_SIZE = Mazebound.CELL_SIZE;
 
     private final long seed;
-    private final int radiusCells;
+    private final int innerRadiusCells;
+    private final int outerRadiusCells;
     private final Map<String, Cell> cells;
-    private final RegionManager regionManager;
 
     private MazeLayout(
             long seed,
-            int radiusCells,
-            Map<String, Cell> cells,
-            RegionManager regionManager
+            int innerRadiusCells,
+            int outerRadiusCells,
+            Map<String, Cell> cells
     ) {
         this.seed = seed;
-        this.radiusCells = radiusCells;
+        this.innerRadiusCells = innerRadiusCells;
+        this.outerRadiusCells = outerRadiusCells;
         this.cells = cells;
-        this.regionManager = regionManager;
     }
 
-    public static MazeLayout generate(long seed, int radiusCells) {
-
-        if (radiusCells <= RegionManager.HUB_RADIUS) {
-            throw new IllegalArgumentException(
-                    "radius-cells must be larger than the hub radius ("
-                            + RegionManager.HUB_RADIUS + ")"
-            );
-        }
-
-        RegionManager regionManager = new RegionManager();
-        WorldPlanner planner = new WorldPlanner(regionManager);
-
-        Map<String, Cell> cells = new MazeGenerator(seed).generate(
-                -radiusCells,
-                radiusCells,
-                -radiusCells,
-                radiusCells,
-                planner
+    public static MazeLayout generate(
+            long seed,
+            int innerRadiusCells,
+            int outerRadiusCells,
+            int entrancesPerSide
+    ) {
+        Map<String, Cell> cells = new MazeGenerator(seed).generateRing(
+                innerRadiusCells,
+                outerRadiusCells,
+                entrancesPerSide
         );
 
         return new MazeLayout(
                 seed,
-                radiusCells,
-                Collections.unmodifiableMap(cells),
-                regionManager
+                innerRadiusCells,
+                outerRadiusCells,
+                Collections.unmodifiableMap(cells)
         );
     }
 
@@ -73,15 +65,19 @@ public class MazeLayout {
         return seed;
     }
 
-    public int radiusCells() {
-        return radiusCells;
+    public int innerRadiusCells() {
+        return innerRadiusCells;
+    }
+
+    public int outerRadiusCells() {
+        return outerRadiusCells;
     }
 
     public Collection<Cell> cells() {
         return cells.values();
     }
 
-    /** The maze cell at cell coordinates, or null (hub / outside the maze). */
+    /** The maze cell at cell coordinates, or null (not part of the maze). */
     public Cell getCell(int cellX, int cellZ) {
         return cells.get(cellX + "," + cellZ);
     }
@@ -99,27 +95,47 @@ public class MazeLayout {
         return getCellAtBlock(blockX, blockZ) != null;
     }
 
-    public RegionType getRegionType(int cellX, int cellZ) {
-        return regionManager.getRegionType(new Cell(cellX, cellZ));
-    }
-
-    /** Lowest block coordinate covered by the maze bounds (both axes). */
+    /** Lowest block coordinate covered by the maze's outer edge. */
     public int minBlock() {
-        return -radiusCells * CELL_SIZE;
+        return -outerRadiusCells * CELL_SIZE;
     }
 
-    /** Highest block coordinate covered by the maze bounds (both axes). */
+    /** Highest block coordinate covered by the maze's outer edge. */
     public int maxBlock() {
-        return (radiusCells + 1) * CELL_SIZE - 1;
+        return (outerRadiusCells + 1) * CELL_SIZE - 1;
     }
 
-    /** Quick reject test: does this chunk touch the maze bounds at all? */
+    /** Lowest block coordinate of the untouched area inside the ring. */
+    public int holeMinBlock() {
+        return -(innerRadiusCells - 1) * CELL_SIZE;
+    }
+
+    /** Highest block coordinate of the untouched area inside the ring. */
+    public int holeMaxBlock() {
+        return innerRadiusCells * CELL_SIZE - 1;
+    }
+
+    /**
+     * Quick reject test: could this chunk contain maze columns? False for
+     * chunks outside the outer edge and chunks entirely inside the hole.
+     */
     public boolean intersectsChunk(int chunkX, int chunkZ) {
 
         int minX = chunkX << 4;
         int minZ = chunkZ << 4;
+        int maxX = minX + 15;
+        int maxZ = minZ + 15;
 
-        return minX + 15 >= minBlock() && minX <= maxBlock()
-                && minZ + 15 >= minBlock() && minZ <= maxBlock();
+        boolean overlapsBounds = maxX >= minBlock() && minX <= maxBlock()
+                && maxZ >= minBlock() && minZ <= maxBlock();
+
+        if (!overlapsBounds) {
+            return false;
+        }
+
+        boolean insideHole = minX >= holeMinBlock() && maxX <= holeMaxBlock()
+                && minZ >= holeMinBlock() && maxZ <= holeMaxBlock();
+
+        return !insideHole;
     }
 }

@@ -4,8 +4,13 @@ main: net.mazebound.Mazebound
 api-version: '1.21'
 author: Silva44444
 description: The Mazebound exploration server plugin
+depend: [LuckPerms]
 
 commands:
+  mazebound:
+    description: Mazebound admin commands
+    usage: /mazebound give <player> herbal_remedy
+
   profile:
     description: View your Mazebound profile
     usage: /profile

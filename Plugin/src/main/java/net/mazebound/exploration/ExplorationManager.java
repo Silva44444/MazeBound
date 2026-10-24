@@ -1,53 +1,61 @@
 package net.mazebound.exploration;
 
+import net.mazebound.Mazebound;
+import net.mazebound.data.MilestoneManager;
 import net.mazebound.data.PlayerData;
 import net.mazebound.data.PlayerDataManager;
-import net.mazebound.data.PlayerData;
-import net.mazebound.data.MilestoneManager;
+import net.mazebound.world.MazeLayout;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
 public class ExplorationManager {
 
-    private static final int CELL_SIZE = 55;
+    private static final int CELL_SIZE = Mazebound.CELL_SIZE;
 
     private final PlayerDataManager playerDataManager;
     private final RegionManager regionManager;
     private final MilestoneManager milestoneManager;
 
+    // Set from Mazebound.onEnable once the maze has been generated.
+    private MazeLayout layout;
+
     public ExplorationManager(PlayerDataManager playerDataManager) {
-    this.playerDataManager = playerDataManager;
-    this.regionManager = new RegionManager();
-    this.milestoneManager =
-            new MilestoneManager(playerDataManager);
-}
-   public boolean discoverCell(UUID playerId, Location location) {
-
-    if (!isMazeLocation(location)) {
-        return false;
+        this.playerDataManager = playerDataManager;
+        this.regionManager = new RegionManager();
+        this.milestoneManager =
+                new MilestoneManager(playerDataManager);
     }
 
-    Cell cell = getCellFromLocation(location);
-    String cellId = cell.getId();
-
-    PlayerData data =
-            playerDataManager.getPlayerData(playerId);
-
-    boolean discovered =
-            data.discoverCell(cellId);
-
-    if (!discovered) {
-        return false;
+    public void setLayout(MazeLayout layout) {
+        this.layout = layout;
     }
 
-    data.addXp(10);
+    public boolean discoverCell(UUID playerId, Location location) {
 
-milestoneManager.checkMilestones(playerId);
+        if (!isMazeLocation(location)) {
+            return false;
+        }
 
-return true;
+        Cell cell = getCellFromLocation(location);
+        String cellId = cell.getId();
 
-}
+        PlayerData data =
+                playerDataManager.getPlayerData(playerId);
+
+        boolean discovered =
+                data.discoverCell(cellId);
+
+        if (!discovered) {
+            return false;
+        }
+
+        data.addXp(10);
+
+        milestoneManager.checkMilestones(playerId);
+
+        return true;
+    }
 
     public Cell getCellFromLocation(Location location) {
 
@@ -71,9 +79,16 @@ return true;
         return regionManager.getRegionType(cell);
     }
 
+    /**
+     * True only inside a cell that actually exists in the generated maze
+     * (not in the hub, and not outside the maze bounds).
+     */
     public boolean isMazeLocation(Location location) {
 
-        return getRegionFromLocation(location)
-                == RegionType.MAZE;
+        return layout != null
+                && layout.isMazeBlock(
+                location.getBlockX(),
+                location.getBlockZ()
+        );
     }
 }
