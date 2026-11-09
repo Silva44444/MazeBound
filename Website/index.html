@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10140f">
+  <meta name="description" content="The Mazebound player portal. Track your discoveries and progress through the maze.">
+  <title>Mazebound Portal</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#home" aria-label="Mazebound home">
+        <span class="brand-mark">M</span>
+        <span><strong>MAZEBOUND</strong><small>PLAYER PORTAL</small></span>
+      </a>
+      <div class="nav-label">PORTAL</div>
+      <nav aria-label="Main navigation">
+        <a class="nav-link active" href="#home" data-page="home"><span>⌂</span> Overview</a>
+        <a class="nav-link" href="#exploration" data-page="exploration"><span>▦</span> My exploration</a>
+        <a class="nav-link" href="#leaderboards" data-page="leaderboards"><span>♜</span> Leaderboards</a>
+        <a class="nav-link" href="#profile" data-page="profile"><span>◎</span> Player profile</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <span class="status-dot"></span>
+        <span>Game connection</span>
+        <strong class="status-text">Not connected</strong>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><span class="eyebrow">THE WORLD BEYOND THE WALLS</span><h1 id="page-title">Overview</h1></div>
+        <div class="account-chip"><span class="avatar">?</span><span><strong>Guest</strong><small>Not linked</small></span></div>
+      </header>
+
+      <section class="page active" id="page-home">
+        <div class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">YOUR JOURNEY STARTS HERE</span>
+            <h2>Every passage<br>has a story.</h2>
+            <p>Your Mazebound discoveries, progress and player identity will live here.</p>
+            <a class="primary-button" href="#exploration" data-page="exploration">View my exploration <span>→</span></a>
+          </div>
+          <div class="hero-art" aria-hidden="true"><div class="maze-glyph"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>FIND YOUR WAY</span></div>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">PLAYER DASHBOARD</span><h2>Your progress</h2></div><span class="muted">Live data will appear after connection</span></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-icon">⌖</span><span class="stat-label">Maze explored</span><strong>—</strong><small>Waiting for game data</small></article>
+          <article class="stat-card"><span class="stat-icon">◇</span><span class="stat-label">Cells discovered</span><strong>—</strong><small>Personal discoveries</small></article>
+          <article class="stat-card"><span class="stat-icon">✧</span><span class="stat-label">Milestones</span><strong>—</strong><small>Achievements earned</small></article>
+        </div>
+        <div class="connection-card"><div class="connection-symbol">⌁</div><div><strong>Your Minecraft account isn't connected yet</strong><p>This portal is a visual foundation. Linking accounts and importing your real discoveries comes next.</p></div><span class="tag">COMING NEXT</span></div>
+      </section>
+
+      <section class="page" id="page-exploration">
+        <div class="section-heading"><div><span class="eyebrow">YOUR PERSONAL MAP</span><h2>My exploration</h2></div><span class="tag">PRIVATE TO YOU</span></div>
+        <div class="map-panel">
+          <div class="map-toolbar"><div><strong>Discovered maze</strong><small>Only places you have personally explored will be revealed.</small></div><span class="map-legend"><i class="legend-known"></i> Discovered <i class="legend-hidden"></i> Unknown</span></div>
+          <div class="map-empty"><div class="map-emblem">⌖</div><h3>Your map is waiting</h3><p>Once the plugin is connected, your explored cells will appear here. Unvisited parts of the maze will stay hidden.</p><span class="tag">AWAITING MINECRAFT DATA</span></div>
+        </div>
+        <p class="fine-print">The map is intentionally empty for now. No maze shape or exploration progress has been fabricated.</p>
+      </section>
+
+      <section class="page" id="page-leaderboards">
+        <div class="section-heading"><div><span class="eyebrow">THE ADVENTURERS</span><h2>Leaderboards</h2></div></div>
+        <div class="empty-card"><span>♜</span><h3>The rankings are undiscovered</h3><p>Player rankings will appear here when the server provides verified progression data.</p></div>
+      </section>
+
+      <section class="page" id="page-profile">
+        <div class="section-heading"><div><span class="eyebrow">YOUR IDENTITY</span><h2>Player profile</h2></div></div>
+        <div class="empty-card"><span>◎</span><h3>Link your Minecraft account</h3><p>Account linking will let the portal securely load the discoveries belonging to your Minecraft UUID.</p></div>
+      </section>
+
+      <footer>MAZEBOUND PORTAL <span>•</span> FOUNDATION BUILD</footer>
+    </main>
+  </div>
+</body>
+</html>
